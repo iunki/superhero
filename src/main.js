@@ -14,6 +14,9 @@ import StLoading from './components/shared/Loading'
 import StMessage from './components/shared/Message'
 import StatusLabel from './components/shared/StatusLabel'
 import VueCookies from 'vue-cookies'
+import VueSocketio from 'vue-socket.io'
+import socketio from 'socket.io-client'
+
 
 // Shared components registration
 Vue.component('main-layout', MainLayout);
@@ -21,6 +24,9 @@ Vue.component('login-layout', LoginLayout);
 Vue.component('st-loading', StLoading);
 Vue.component('st-message', StMessage);
 Vue.component('st-status', StatusLabel);
+
+export const SocketInstance = socketio('http://10.1.81.177:6002');
+Vue.use(VueSocketio, SocketInstance);
 
 Vue.config.productionTip = false;
 

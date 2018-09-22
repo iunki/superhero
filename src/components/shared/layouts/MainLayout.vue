@@ -73,6 +73,11 @@
           title: 'Помощь',
           url: '/documentation/intro'
         },
+        {
+          icon: 'message',
+          title: 'Чат',
+          url: '/chat'
+        }
       ],
     }),
     methods: {

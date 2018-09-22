@@ -8,6 +8,7 @@ import UserRegistration from '@/components/user/UserRegistration'
 import Documentation from '@/components/documentation/Documentation'
 import DocumentationIntro from '@/components/documentation/DocumentationIntro'
 import DocumentationDetail from '@/components/documentation/DocumentationDetail'
+import Chat from '@/components/chat/Chat'
 import store from '@/store'
 
 Vue.use(Router);
@@ -65,6 +66,11 @@ export default new Router({
       path: '/user/registration',
       name: 'UserRegistration',
       component: UserRegistration
+    },
+    {
+      path: '/chat/:category?',
+      name: 'Chat',
+      component: Chat
     }
   ]
 })
