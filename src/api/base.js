@@ -2,7 +2,7 @@ import axios from 'axios'
 import store from '@/store'
 import router from '@/router'
 
-const url = 'http://188.120.238.74:8081/api/v1/';
+const url = 'http://188.120.238.74:8xxx/api/v1/'; // TODO: Изменить порт на выданный!
 
 let processError = (error) => {
   store.dispatch('showPreLoader', false);

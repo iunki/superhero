@@ -10,7 +10,7 @@
     name: 'DocumentationDetail',
 
     props: {
-      id: Number
+      id: [Number, String]
     },
 
     computed: {

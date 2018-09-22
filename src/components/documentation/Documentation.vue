@@ -14,7 +14,7 @@
         <v-list-tile
           v-for="(item, index) in handbook"
           :key="'hb-' + index"
-          :class="{'primary--text': active === item.id}"
+          :class="{'primary--text': item.id === active}"
           @click="pushDetailPage(item)"
         >
           <v-list-tile-action>
@@ -69,14 +69,14 @@
 
     created: function () {
       this.$store.dispatch('loadDocumentation').then(() => {
-        this.active = this.$route.params.id || null;
+        this.active = Number(this.$route.params.id) || 100;
       });
     },
 
     beforeUpdate: function () {
-      this.active = this.$route.params.id || null;
+      this.active = Number(this.$route.params.id) || 100;
 
-      if (!this.$route.params.id) {
+      if (!this.active) {
         this.$router.push({
           name: 'DocumentationIntro'
         });
@@ -85,7 +85,7 @@
 
     methods: {
       pushDetailPage: function (item) {
-        this.active = item.id;
+        this.active = Number(item.id);
 
         this.$router.push({
           name: 'DocumentationDetail',

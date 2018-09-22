@@ -40,7 +40,8 @@ export default new Router({
         {
           path: '/documentation/intro',
           name: 'DocumentationIntro',
-          component: DocumentationIntro
+          // component: DocumentationIntro
+          redirect: '/documentation/id=100',
         },
         {
           path: '/documentation/id=:id?',
