@@ -25,7 +25,7 @@ Vue.component('st-loading', StLoading);
 Vue.component('st-message', StMessage);
 Vue.component('st-status', StatusLabel);
 
-export const SocketInstance = socketio('http://10.1.81.177:6002');
+export const SocketInstance = socketio('http://127.0.0.1:6002');
 Vue.use(VueSocketio, SocketInstance);
 
 Vue.config.productionTip = false;

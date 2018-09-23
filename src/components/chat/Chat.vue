@@ -3,7 +3,7 @@
     <v-flex class="mt-4 mx-4">
       <v-flex xs12 class="text-xs-center">
         <p class="headline primary--text" v-if="!category">Чат помощи</p>
-        <p class="headline primary--text"> {{category}}</p>
+        <p class="headline primary--text" v-else> {{category}} отдел</p>
         <p class="headline blue--text"> {{socketId}}</p>
       </v-flex>
       <v-flex xs12 md12 lg8 offset-lg2>
@@ -20,8 +20,25 @@
                     </v-avatar>
                   </div>
                   <div class="content">
-                    <div>{{m.text}}</div>
-                    <div class="date" v-if="m.date">{{m.date | formatDate}}</div>
+                    <template v-if="!m.categories && !m.widget">
+                      <div>{{m.text}}</div>
+                      <div class="date" v-if="m.date">{{m.date | formatDate}}</div>
+                    </template>
+                    <template v-if="m.categories && !m.widget">
+                      <p class="pl-2">Пожалуйста, уточните к какой категории принадлежит вопрос</p>
+                      <div>
+                        <v-btn v-for="category in m.categories" :key="category" @click="onCategoryClick(category)">{{category}}</v-btn>
+                      </div>
+                      <div class="date">{{m.date | formatDate}}</div>
+                    </template>
+                    <template v-if="m.widget === 'widget'">
+                      <p>{{m.text}}</p>
+                      <div>
+                        <v-text-field box label="Вопрос" v-model="widgetQuestion" style="min-width: 400px;"></v-text-field>
+                        <v-text-field box label="Ответ" v-model="widgetAnswer" style="min-width: 400px;"></v-text-field>
+                        <v-btn @click="saveNewQuestion">Сохранить</v-btn>
+                      </div>
+                    </template>
                   </div>
                 </div>
               </div>
@@ -36,7 +53,6 @@
                   <v-btn class="ml-4" color="primary" @click="sendMessage">Отправить</v-btn>
                 </v-card-actions>
               </v-form>
-
             </v-card-text>
           </v-card>
         </div>
@@ -61,7 +77,24 @@
         if (socketId) {
           this.socketId = socketId
         }
+        if (message === '{{widget-question-update}}') {
+          this.messages.push({
+            text: 'Обновить wiki',
+            widget: 'widget',
+            date: new Date()
+          })
+          return
+        }
         this.messages.push({
+          text: message,
+          date: new Date()
+        })
+      },
+      categories({message, categories}) {
+        console.log(message);
+        console.log(categories);
+        this.messages.push({
+          categories: categories,
           text: message,
           date: new Date()
         })
@@ -70,7 +103,10 @@
     data: () => ({
       category: '',
       message: '',
+      oldMessage: '',
       socketId: null,
+      widgetQuestion: '',
+      widgetAnswer: '',
       messages: [
         /*{
           id: 1,
@@ -87,13 +123,28 @@
     },
     methods: {
       sendMessage() {
-        this.$socket.emit('question', {message: this.message, socketId: this.socketId});
+        if (this.socketId) {
+          this.$socket.emit('question', {
+            message: this.message,
+            socketId: this.socketId,
+            question: this.messages[this.messages.length - 1].text
+          });
+        } else {
+          this.$socket.emit('question', {message: this.message, socketId: this.socketId});
+        }
         this.messages.push({
           type: 'own',
           text: this.message,
           date: new Date()
         })
+        this.oldMessage = this.message
         this.message = ''
+      },
+      onCategoryClick(category) {
+        this.$socket.emit('changeCategory', {category: category, message: this.oldMessage});
+      },
+      saveNewQuestion() {
+        this.$socket.emit('save', {category: 'it', question: this.widgetQuestion, answer: this.widgetAnswer});
       }
     },
     mounted() {
@@ -101,7 +152,7 @@
       let message = 'Добро пожаловать! Задайте интересующий Вас вопрос.'
       if (this.category) {
         this.$socket.emit('register', this.category);
-        message = 'Здравствуйте. Здесь вопросы по ' + this.category
+        message = 'Здравствуйте. Здесь будут вопросы по ' + this.category
       }
       this.messages.push({
         text: message
@@ -113,6 +164,7 @@
 <style lang="scss">
   #chat-zone {
     min-height: 60vh;
+    max-height: 60vh;
     border-radius: 5px;
     background-color: #fff;
     overflow-y: auto;
