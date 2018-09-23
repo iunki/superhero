@@ -112,7 +112,7 @@
 
 <style lang="scss">
   #chat-zone {
-    min-height: 60vh;
+    height: 60vh;
     border-radius: 5px;
     background-color: #fff;
     overflow-y: auto;
